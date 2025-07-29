@@ -19,13 +19,12 @@ jobs:
           name: Build Docker image
           command: |
             docker build -t flask-hello-app .
-      # Optional: Log in and push to Docker Hub
-      # - run:
-      #     name: Push Docker image to Docker Hub
-      #     command: |
-      #       echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-      #       docker tag flask-hello-app $DOCKERHUB_USERNAME/flask-hello-app:latest
-      #       docker push $DOCKERHUB_USERNAME/flask-hello-app:latest
+      - run:
+          name: Push Docker image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker tag flask-hello-app $DOCKERHUB_USERNAME/flask-hello-app:latest
+            docker push $DOCKERHUB_USERNAME/flask-hello-app:latest
 
 workflows:
   build_and_test:
