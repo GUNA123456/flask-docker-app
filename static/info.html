@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Page - Flask JSON API Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>About Information</h1>
+    <pre id="json-output" class="json-output">Loading...</pre>
+    <a href="/">Go Home</a>
+  </div>
+
+  <script>
+    async function fetchData() {
+      const output = document.getElementById('json-output');
+      try {
+        const response = await fetch('/api/info');
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+        const data = await response.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = `Error: ${err.message}`;
+      }
+    }
+    fetchData();
+  </script>
+</body>
+</html>
