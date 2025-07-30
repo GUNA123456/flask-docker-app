@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 def make_response(status, message, data=None):
     response = {"status": status, "message": message}
@@ -9,15 +9,20 @@ def make_response(status, message, data=None):
     return jsonify(response)
 
 @app.route('/')
-def hello():
-    return make_response(
-        "success",
-        "Hello, World!",
-        {"details": "This is the home page response"}
-    )
+def index():
+    return send_from_directory('static', 'index.html')
 
 @app.route('/about')
-def about():
+def about_page():
+    return send_from_directory('static', 'about.html')
+
+@app.route('/info')
+def info_page():
+    return send_from_directory('static', 'info.html')
+
+# API endpoints serve JSON
+@app.route('/api/about')
+def about_api():
     return make_response(
         "success",
         "About Page",
@@ -27,22 +32,15 @@ def about():
         }
     )
 
-@app.route('/info')
-def info():
+@app.route('/api/info')
+def info_api():
     return make_response(
         "success",
         "App Info",
         {"owner": "Alice"}
     )
 
-# Example error handler
-@app.errorhandler(404)
-def not_found(e):
-    return make_response(
-        "error",
-        "Endpoint not found",
-        None
-    ), 404
+# Error handler, etc...
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)

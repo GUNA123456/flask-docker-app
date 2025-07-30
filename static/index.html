@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flask JSON API Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Flask JSON API Viewer</h1>
+
+    <div class="buttons">
+      <button onclick="fetchData('about.html')">Load About</button>
+      <button onclick="fetchData('info.html')">Load Info</button>
+      <button onclick="clearData()">Clear</button>
+    </div>
+
+    <pre id="json-output" class="json-output">Click a button to load JSON data</pre>
+  </div>
+
+  <script>
+    async function fetchData(endpoint) {
+      const output = document.getElementById('json-output');
+      output.textContent = 'Loading...';
+
+      try {
+        const response = await fetch(`/${endpoint}`);
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+        const data = await response.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    function clearData() {
+      document.getElementById('json-output').textContent = 'Click a button to load JSON data';
+    }
+  </script>
+</body>
+</html>
