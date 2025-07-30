@@ -17,7 +17,27 @@ jobs:
           name: Push Docker image with SHA tag
           command: docker push $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
 
-  test:
+  # test:
+  #   docker:
+  #     - image: cimg/python:3.12
+  #   steps:
+  #     - setup_remote_docker
+  #     - run:
+  #         name: Docker login
+  #         command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  #     - run:
+  #         name: Pull Docker image for testing
+  #         command: docker pull $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
+  #     - run:
+  #         name: Run container and health check
+  #         command: |
+  #           docker run -d -p 5000:5000 --name flask-test $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
+  #           # wait a few seconds for container start
+  #           sleep 5
+  #           # test main endpoint. Expand this as you add more tests!
+  #           curl --fail http://localhost:5000/ || (docker logs flask-test && exit 1)
+  #           docker stop flask-test
+   test:
     docker:
       - image: cimg/python:3.12
     steps:
@@ -29,13 +49,12 @@ jobs:
           name: Pull Docker image for testing
           command: docker pull $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
       - run:
-          name: Run container and health check
+          name: Run container and health check (inside container)
           command: |
-            docker run -d -p 5000:5000 --name flask-test $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
-            # wait a few seconds for container start
+            docker run -d --name flask-test $DOCKERHUB_USERNAME/flask-hello-app:$CIRCLE_SHA1
             sleep 5
-            # test main endpoint. Expand this as you add more tests!
-            curl --fail http://localhost:5000/ || (docker logs flask-test && exit 1)
+            # Test API from inside the running container
+            docker exec flask-test curl --fail http://localhost:5000/ || (docker logs flask-test && exit 1)
             docker stop flask-test
 
   push-latest:
